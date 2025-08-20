@@ -1,0 +1,5 @@
+pymupdf
+openai
+python-dotenv
+reportlab
+flask
