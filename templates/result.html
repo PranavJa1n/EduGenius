@@ -42,6 +42,19 @@
             background: var(--primary-bg);
             color: var(--text-primary);
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Canvas */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
 
         /* Header */
@@ -334,6 +347,9 @@
 </head>
 
 <body>
+    <!-- Background Canvas for 3D Particle Effect -->
+    <canvas id="background-canvas"></canvas>
+
     <header>
         <nav>
             <div class="logo">EduGenius</div>
@@ -491,22 +507,101 @@
             questionsToggle.addEventListener('click', showQuestions);
             answersToggle.addEventListener('click', showAnswers);
 
-            // Check if PDF embed is supported
-            const testEmbed = document.createElement('embed');
-            testEmbed.src = 'data:application/pdf;base64,';
-            testEmbed.type = 'application/pdf';
-            testEmbed.style.display = 'none';
-            document.body.appendChild(testEmbed);
-            
-            setTimeout(() => {
-                if (testEmbed.offsetHeight === 0) {
-                    // PDF embed not supported, show fallback
-                    document.getElementById('pdf-fallback').style.display = 'block';
-                    questionsPdf.style.display = 'none';
-                    answersPdf.style.display = 'none';
+            // Check if PDF embed is supported - FIXED: Only show fallback if PDFs can't be displayed
+            function checkPDFSupport() {
+                const questionsPdf = document.getElementById('questions-pdf');
+                const answersPdf = document.getElementById('answers-pdf');
+                const fallback = document.getElementById('pdf-fallback');
+                
+                // Give the browser time to load the PDF
+                setTimeout(() => {
+                    // Check if the embed element has loaded content
+                    try {
+                        // Try to access the embed's document (will fail if PDF not loaded)
+                        const hasContent = questionsPdf.offsetHeight > 0 && questionsPdf.offsetWidth > 0;
+                        
+                        if (!hasContent) {
+                            // PDFs didn't load, show fallback
+                            fallback.style.display = 'block';
+                            questionsPdf.style.display = 'none';
+                            answersPdf.style.display = 'none';
+                        } else {
+                            // PDFs loaded successfully, ensure questions are visible by default
+                            questionsPdf.style.display = 'block';
+                            answersPdf.style.display = 'none';
+                            fallback.style.display = 'none';
+                        }
+                    } catch (e) {
+                        // If we can't check, assume PDFs are working
+                        questionsPdf.style.display = 'block';
+                        answersPdf.style.display = 'none';
+                        fallback.style.display = 'none';
+                    }
+                }, 1000); // Wait 1 second for PDF to load
+            }
+
+            // Call the PDF support check
+            checkPDFSupport();
+
+            // Background particle effect (copied from index.html)
+            const canvas = document.getElementById('background-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particlesArray;
+
+            class Particle {
+                constructor(x, y, dX, dY, size) {
+                    this.x = x;
+                    this.y = y;
+                    this.directionX = dX;
+                    this.directionY = dY;
+                    this.size = size;
                 }
-                document.body.removeChild(testEmbed);
-            }, 100);
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = 'rgba(99, 102, 241, 0.3)';
+                    ctx.fill();
+                }
+
+                update() {
+                    if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                    if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                    this.x += this.directionX;
+                    this.y += this.directionY;
+                    this.draw();
+                }
+            }
+
+            function initCanvas() {
+                particlesArray = [];
+                let num = (canvas.height * canvas.width) / 9000;
+                for (let i = 0; i < num; i++) {
+                    let size = (Math.random() * 2) + 1;
+                    let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                    let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                    let dX = (Math.random() * 0.4) - 0.2;
+                    let dY = (Math.random() * 0.4) - 0.2;
+                    particlesArray.push(new Particle(x, y, dX, dY, size));
+                }
+            }
+
+            function animateCanvas() {
+                requestAnimationFrame(animateCanvas);
+                ctx.clearRect(0, 0, innerWidth, innerHeight);
+                particlesArray.forEach(p => p.update());
+            }
+
+            initCanvas();
+            animateCanvas();
+
+            window.addEventListener('resize', () => {
+                canvas.width = innerWidth;
+                canvas.height = innerHeight;
+                initCanvas();
+            });
         });
     </script>
 </body>
