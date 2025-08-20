@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Quiz - EduGenius</title>
+    <style>
+        /* CSS Variables for Theme Support */
+        :root {
+            --primary-bg: #0a0a0f;
+            --secondary-bg: #1a1a2e;
+            --glass-bg: rgba(26, 26, 46, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #b4b4b8;
+            --accent-color: #6366f1;
+            --primary-glow: #818cf8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --error-color: #ef4444;
+            --success-color: #10b981;
+        }
+
+        .light-theme {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8fafc;
+            --glass-bg: rgba(248, 250, 252, 0.8);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-color: #3b82f6;
+            --primary-glow: #60a5fa;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+        }
+
+        .theme-button {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .theme-button:hover {
+            background: var(--glass-bg);
+            border-color: var(--accent-color);
+        }
+
+        .light-theme .sun {
+            display: none;
+        }
+
+        .dark-theme .moon {
+            display: none;
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 100px;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .quiz-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .quiz-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* PDF Toggle Controls */
+        .pdf-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .toggle-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 0.5rem;
+            display: flex;
+            position: relative;
+        }
+
+        .toggle-option {
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        .toggle-option.active {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            color: white;
+        }
+
+        .toggle-option:not(.active) {
+            color: var(--text-secondary);
+        }
+
+        .toggle-option:not(.active):hover {
+            color: var(--text-primary);
+        }
+
+        /* Download Buttons */
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .download-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .download-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        /* PDF Viewer */
+        .pdf-viewer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .pdf-embed {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            border-radius: 12px;
+            background: white;
+        }
+
+        /* Back Button */
+        .back-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateX(-2px);
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quiz-stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .pdf-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+            }
+
+            .toggle-container {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .pdf-embed {
+                height: 60vh;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">EduGenius</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">← Back to Upload</a>
+                <a href="#" class="nav-link">Help</a>
+                <button id="theme-toggle" class="theme-button" title="Toggle Theme">
+                    <!-- Sun Icon -->
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <!-- Moon Icon -->
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Success Message -->
+            <div class="success-message">
+                ✅ Quiz generated successfully! Your questions and answers are ready.
+            </div>
+
+            <!-- Quiz Header -->
+            <div class="quiz-header">
+                <h1>Generated Quiz</h1>
+                
+                <!-- Quiz Statistics -->
+                <div class="quiz-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ mcq_count }}</div>
+                        <div class="stat-label">Multiple Choice Questions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ tf_count }}</div>
+                        <div class="stat-label">True/False Questions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ mcq_count + tf_count }}</div>
+                        <div class="stat-label">Total Questions</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PDF Controls -->
+            <div class="pdf-controls">
+                <!-- Toggle Switch -->
+                <div class="toggle-container">
+                    <div class="toggle-option active" id="questions-toggle">
+                        📝 Questions
+                    </div>
+                    <div class="toggle-option" id="answers-toggle">
+                        ✅ Answer Key
+                    </div>
+                </div>
+
+                <!-- Download Buttons -->
+                <div class="download-buttons">
+                    <a href="/download/questions" class="download-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download Questions
+                    </a>
+                    <a href="/download/answers" class="download-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download Answers
+                    </a>
+                </div>
+            </div>
+
+            <!-- PDF Viewer -->
+            <div class="pdf-viewer">
+                <!-- Questions PDF -->
+                <embed id="questions-pdf" 
+                       src="data:application/pdf;base64,{{ question_pdf }}" 
+                       type="application/pdf" 
+                       class="pdf-embed">
+
+                <!-- Answers PDF (hidden by default) -->
+                <embed id="answers-pdf" 
+                       src="data:application/pdf;base64,{{ answer_pdf }}" 
+                       type="application/pdf" 
+                       class="pdf-embed" 
+                       style="display: none;">
+
+                <!-- Fallback for browsers that don't support embed -->
+                <div id="pdf-fallback" style="display: none; text-align: center; padding: 2rem;">
+                    <p style="margin-bottom: 1rem;">Your browser doesn't support PDF viewing.</p>
+                    <div class="download-buttons" style="justify-content: center;">
+                        <a href="/download/questions" class="download-btn">Download Questions PDF</a>
+                        <a href="/download/answers" class="download-btn">Download Answer Key PDF</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme toggle
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const docElement = document.documentElement;
+            
+            themeToggleBtn.addEventListener('click', () => {
+                if (docElement.classList.contains('dark-theme')) {
+                    docElement.className = 'light-theme';
+                } else {
+                    docElement.className = 'dark-theme';
+                }
+            });
+
+            // PDF Toggle functionality
+            const questionsToggle = document.getElementById('questions-toggle');
+            const answersToggle = document.getElementById('answers-toggle');
+            const questionsPdf = document.getElementById('questions-pdf');
+            const answersPdf = document.getElementById('answers-pdf');
+
+            function showQuestions() {
+                questionsToggle.classList.add('active');
+                answersToggle.classList.remove('active');
+                questionsPdf.style.display = 'block';
+                answersPdf.style.display = 'none';
+            }
+
+            function showAnswers() {
+                answersToggle.classList.add('active');
+                questionsToggle.classList.remove('active');
+                answersPdf.style.display = 'block';
+                questionsPdf.style.display = 'none';
+            }
+
+            questionsToggle.addEventListener('click', showQuestions);
+            answersToggle.addEventListener('click', showAnswers);
+
+            // Check if PDF embed is supported
+            const testEmbed = document.createElement('embed');
+            testEmbed.src = 'data:application/pdf;base64,';
+            testEmbed.type = 'application/pdf';
+            testEmbed.style.display = 'none';
+            document.body.appendChild(testEmbed);
+            
+            setTimeout(() => {
+                if (testEmbed.offsetHeight === 0) {
+                    // PDF embed not supported, show fallback
+                    document.getElementById('pdf-fallback').style.display = 'block';
+                    questionsPdf.style.display = 'none';
+                    answersPdf.style.display = 'none';
+                }
+                document.body.removeChild(testEmbed);
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

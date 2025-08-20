@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduGenius - Sentient Quiz Architect</title>
+    <style>
+        /* CSS Variables for Theme Support */
+        :root {
+            --primary-bg: #0a0a0f;
+            --secondary-bg: #1a1a2e;
+            --glass-bg: rgba(26, 26, 46, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #b4b4b8;
+            --accent-color: #6366f1;
+            --primary-glow: #818cf8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --error-color: #ef4444;
+            --success-color: #10b981;
+        }
+
+        .light-theme {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8fafc;
+            --glass-bg: rgba(248, 250, 252, 0.8);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-color: #3b82f6;
+            --primary-glow: #60a5fa;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Canvas */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .theme-button {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .theme-button:hover {
+            background: var(--glass-bg);
+            border-color: var(--accent-color);
+        }
+
+        .light-theme .sun {
+            display: none;
+        }
+
+        .dark-theme .moon {
+            display: none;
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 100px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .perspective-container {
+            perspective: 1000px;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .panel-content p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Upload Zone */
+        .upload-drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .upload-drop-zone:hover {
+            border-color: var(--accent-color);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-icon {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .browse-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            text-decoration: underline;
+            font: inherit;
+        }
+
+        .browse-btn:hover {
+            color: var(--primary-glow);
+        }
+
+        /* Generation Options */
+        .generation-options {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .option-group label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .option-group input {
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            text-align: center;
+            font-size: 1rem;
+            width: 80px;
+        }
+
+        .option-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* 3D Button */
+        .btn-3d {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transform: translateY(0);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+            margin: 2rem 0;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-3d:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Tutorial Link */
+        .tutorial-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .tutorial-link:hover {
+            color: var(--accent-color);
+        }
+
+        /* Error/Success Messages */
+        .message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+        .success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        /* Loading State */
+        .loading .btn-3d {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .panel-content h1 {
+                font-size: 2rem;
+            }
+
+            .generation-options {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .glass-panel {
+                padding: 2rem;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background Canvas for 3D Particle Effect -->
+    <canvas id="background-canvas"></canvas>
+
+    <header>
+        <nav>
+            <div class="logo">EduGenius</div>
+            <div class="nav-links">
+                <!-- <a href="#" class="nav-link">My Quizzes</a> -->
+                <a href="#" class="nav-link">Help</a>
+                <button id="theme-toggle" class="theme-button" title="Toggle Theme">
+                    <!-- Sun Icon -->
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <!-- Moon Icon -->
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="screen active">
+            <div class="container perspective-container">
+                <div class="glass-panel tilt-panel" id="upload-panel">
+                    <div class="panel-content">
+                        <h1>The Sentient Quiz Architect</h1>
+                        <p>Upload a PDF. Witness the genesis of knowledge.</p>
+                        
+                        <!-- Display error message if present -->
+                        {% if error %}
+                        <div class="message error">
+                            {{ error }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Upload Form -->
+                        <form action="/upload" method="post" enctype="multipart/form-data" id="upload-form">
+                            <input type="file" id="file-input" name="pdf_file" accept=".pdf" required style="display: none;">
+                            
+                            <div class="upload-drop-zone" id="upload-drop-zone">
+                                <div class="upload-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                            d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm5-9h-4l6-6l6 6h-4v4h-4v-4z" />
+                                    </svg>
+                                </div>
+                                <p>Drag & drop your document here, or <button type="button" id="browse-files-btn"
+                                        class="browse-btn">browse files</button></p>
+                                <div id="file-name" style="margin-top: 1rem; color: var(--success-color); display: none;"></div>
+                            </div>
+
+                            <!-- Generation Options -->
+                            <div class="generation-options">
+                                <div class="option-group">
+                                    <label for="mcq-limit">Number of MCQs</label>
+                                    <input type="number" id="mcq-limit" name="mcq_limit" min="0" max="30" value="10" required>
+                                </div>
+                                <div class="option-group">
+                                    <label for="tf-limit">Number of T/F</label>
+                                    <input type="number" id="tf-limit" name="tf_limit" min="0" max="30" value="10" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-3d" id="generate-btn">
+                                <span class="btn-text">Initiate Genesis</span>
+                            </button>
+                        </form>
+
+                        <!-- <a href="#" id="show-tutorial-btn" class="tutorial-link">How does this work? Watch a quick
+                            tutorial.</a> -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme toggle
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const docElement = document.documentElement;
+            
+            themeToggleBtn.addEventListener('click', () => {
+                if (docElement.classList.contains('dark-theme')) {
+                    docElement.className = 'light-theme';
+                } else {
+                    docElement.className = 'dark-theme';
+                }
+            });
+
+            // File input handling
+            const fileInput = document.getElementById('file-input');
+            const browseBtn = document.getElementById('browse-files-btn');
+            const dropZone = document.getElementById('upload-drop-zone');
+            const fileName = document.getElementById('file-name');
+            const form = document.getElementById('upload-form');
+
+            browseBtn.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    fileName.textContent = `Selected: ${e.target.files[0].name}`;
+                    fileName.style.display = 'block';
+                }
+            });
+
+            // Drag and drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'var(--accent-color)';
+                dropZone.style.background = 'rgba(99, 102, 241, 0.05)';
+            });
+
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'var(--border-color)';
+                dropZone.style.background = 'rgba(255, 255, 255, 0.02)';
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type === 'application/pdf') {
+                    fileInput.files = files;
+                    fileName.textContent = `Selected: ${files[0].name}`;
+                    fileName.style.display = 'block';
+                }
+                dropZone.style.borderColor = 'var(--border-color)';
+                dropZone.style.background = 'rgba(255, 255, 255, 0.02)';
+            });
+
+            // Form submission loading state
+            form.addEventListener('submit', () => {
+                const submitBtn = document.getElementById('generate-btn');
+                submitBtn.classList.add('loading');
+                submitBtn.querySelector('.btn-text').textContent = 'Processing...';
+                document.body.classList.add('loading');
+            });
+
+            // 3D Panel tilt effect
+            const uploadPanel = document.getElementById('upload-panel');
+            uploadPanel.addEventListener('mousemove', (e) => {
+                const rect = uploadPanel.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const cX = rect.width / 2;
+                const cY = rect.height / 2;
+                const rX = ((y - cY) / cY) * -5;
+                const rY = ((x - cX) / cX) * 5;
+                uploadPanel.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg)`;
+            });
+
+            uploadPanel.addEventListener('mouseleave', () => {
+                uploadPanel.style.transform = `rotateX(0) rotateY(0)`;
+            });
+
+            // Background particle effect
+            const canvas = document.getElementById('background-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particlesArray;
+
+            class Particle {
+                constructor(x, y, dX, dY, size) {
+                    this.x = x;
+                    this.y = y;
+                    this.directionX = dX;
+                    this.directionY = dY;
+                    this.size = size;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = 'rgba(99, 102, 241, 0.3)';
+                    ctx.fill();
+                }
+
+                update() {
+                    if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                    if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                    this.x += this.directionX;
+                    this.y += this.directionY;
+                    this.draw();
+                }
+            }
+
+            function initCanvas() {
+                particlesArray = [];
+                let num = (canvas.height * canvas.width) / 9000;
+                for (let i = 0; i < num; i++) {
+                    let size = (Math.random() * 2) + 1;
+                    let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                    let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                    let dX = (Math.random() * 0.4) - 0.2;
+                    let dY = (Math.random() * 0.4) - 0.2;
+                    particlesArray.push(new Particle(x, y, dX, dY, size));
+                }
+            }
+
+            function animateCanvas() {
+                requestAnimationFrame(animateCanvas);
+                ctx.clearRect(0, 0, innerWidth, innerHeight);
+                particlesArray.forEach(p => p.update());
+            }
+
+            initCanvas();
+            animateCanvas();
+
+            window.addEventListener('resize', () => {
+                canvas.width = innerWidth;
+                canvas.height = innerHeight;
+                initCanvas();
+            });
+        });
+    </script>
+</body>
+
+</html>
