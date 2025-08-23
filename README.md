@@ -203,8 +203,6 @@ Please create an issue with:
 
 ---
 
----
-
 <div align="center">
   <h2>🚀 Ready to Transform Your Teaching?</h2>
   <p><strong>Visit <a href="https://edugenius-7ng0.onrender.com">EduGenius Live</a> and create your first AI-powered quiz in minutes!</strong></p>
