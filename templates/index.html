@@ -346,7 +346,7 @@
             <div class="logo">EduGenius</div>
             <div class="nav-links">
                 <!-- <a href="#" class="nav-link">My Quizzes</a> -->
-                <a href="#" class="nav-link">Help</a>
+                <a href="/help" class="nav-link">Help</a>
                 <button id="theme-toggle" class="theme-button" title="Toggle Theme">
                     <!-- Sun Icon -->
                     <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -432,14 +432,20 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Theme toggle
-            const themeToggleBtn = document.getElementById('theme-toggle');
+            const savedTheme = localStorage.getItem('theme') || 'dark';
             const docElement = document.documentElement;
+            docElement.className = savedTheme + '-theme';
+
+            // Theme toggle (MODIFY THE EXISTING ONE)
+            const themeToggleBtn = document.getElementById('theme-toggle');
             
             themeToggleBtn.addEventListener('click', () => {
                 if (docElement.classList.contains('dark-theme')) {
                     docElement.className = 'light-theme';
+                    localStorage.setItem('theme', 'light'); // ADD THIS LINE
                 } else {
                     docElement.className = 'dark-theme';
+                    localStorage.setItem('theme', 'dark'); // ADD THIS LINE
                 }
             });
 

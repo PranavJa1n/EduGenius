@@ -472,15 +472,21 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Theme toggle
-            const themeToggleBtn = document.getElementById('theme-toggle');
+            // Initialize theme from localStorage (ADD THIS FIRST)
+            const savedTheme = localStorage.getItem('theme') || 'dark';
             const docElement = document.documentElement;
+            docElement.className = savedTheme + '-theme';
+
+            // Theme toggle (MODIFY THE EXISTING ONE)
+            const themeToggleBtn = document.getElementById('theme-toggle');
             
             themeToggleBtn.addEventListener('click', () => {
                 if (docElement.classList.contains('dark-theme')) {
                     docElement.className = 'light-theme';
+                    localStorage.setItem('theme', 'light'); // ADD THIS LINE
                 } else {
                     docElement.className = 'dark-theme';
+                    localStorage.setItem('theme', 'dark'); // ADD THIS LINE
                 }
             });
 

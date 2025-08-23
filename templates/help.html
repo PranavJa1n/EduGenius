@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help - EduGenius</title>
+    <style>
+        /* CSS Variables for Theme Support */
+        :root {
+            --primary-bg: #0a0a0f;
+            --secondary-bg: #1a1a2e;
+            --glass-bg: rgba(26, 26, 46, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #b4b4b8;
+            --accent-color: #6366f1;
+            --primary-glow: #818cf8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        .light-theme {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8fafc;
+            --glass-bg: rgba(248, 250, 252, 0.8);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-color: #3b82f6;
+            --primary-glow: #60a5fa;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Canvas */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+        }
+
+        .theme-button {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .theme-button:hover {
+            background: var(--glass-bg);
+            border-color: var(--accent-color);
+        }
+
+        .light-theme .sun {
+            display: none;
+        }
+
+        .dark-theme .moon {
+            display: none;
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 100px;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Help Content */
+        .help-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .help-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .help-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .help-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .help-section h2 {
+            color: var(--accent-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .help-section h3 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+        }
+
+        .help-section h3:first-of-type {
+            margin-top: 0;
+        }
+
+        .help-section p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .help-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .help-section li {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .help-section li:before {
+            content: "•";
+            color: var(--accent-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-glow));
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .tip-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .tip-box h4 {
+            color: var(--warning-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .troubleshoot-item {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .troubleshoot-item strong {
+            color: var(--error-color);
+        }
+
+        .github-link {
+            background: linear-gradient(135deg, #24292e, #484f58);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-weight: 500;
+        }
+
+        .github-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(36, 41, 46, 0.3);
+        }
+
+        .contact-info {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .help-section {
+                padding: 2rem;
+            }
+
+            .help-header h1 {
+                font-size: 2rem;
+            }
+
+            .help-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background Canvas for 3D Particle Effect -->
+    <canvas id="background-canvas"></canvas>
+
+    <header>
+        <nav>
+            <div class="logo">EduGenius</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">← Back to Home</a>
+                <button id="theme-toggle" class="theme-button" title="Toggle Theme">
+                    <!-- Sun Icon -->
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <!-- Moon Icon -->
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Help Header -->
+            <div class="help-header">
+                <h1>📚 EduGenius User Guide</h1>
+                <p>Learn how to create amazing quizzes from your PDF documents in just a few clicks</p>
+            </div>
+
+            <!-- Introduction -->
+            <div class="help-section">
+                <h2>🎯 Introduction</h2>
+                <h3>Welcome to the EduGenius App</h3>
+                <p>This powerful tool allows educators to upload study documents (like PDFs) and automatically generate multiple-choice and true/false questions with complete answer keys. Teachers can then review and export the quiz for classroom use.</p>
+            </div>
+
+            <!-- Key Features -->
+            <div class="help-section">
+                <h2>✨ Key Features</h2>
+                <ul>
+                    <li><strong>📄 Upload PDF/Chapter</strong> – Import your study material in PDF format</li>
+                    <li><strong>🤖 AI Question Generation</strong> – The system automatically creates MCQs and True/False questions</li>
+                    <li><strong>📊 Customizable Quantity</strong> – Choose how many questions you want (up to 30 each type)</li>
+                    <li><strong>📥 Export Option</strong> – Download quizzes as PDF files for classroom use</li>
+                    <li><strong>🎨 Beautiful Interface</strong> – Modern, user-friendly design with dark/light theme support</li>
+                </ul>
+            </div>
+
+            <!-- How to Use -->
+            <div class="help-section">
+                <h2>🚀 How to Use</h2>
+                
+                <h3><span class="step-number">1</span>Upload Document</h3>
+                <p>Click the upload zone or drag and drop your PDF file. Make sure your document contains readable text (not just images).</p>
+
+                <h3><span class="step-number">2</span>Set Question Limits</h3>
+                <p>Choose how many Multiple Choice Questions (MCQs) and True/False questions you want. You can set anywhere from 0 to 30 for each type.</p>
+
+                <h3><span class="step-number">3</span>Generate Questions</h3>
+                <p>Press "Initiate Genesis" and wait while our AI processes your document and creates intelligent questions.</p>
+
+                <h3><span class="step-number">4</span>Review & Download</h3>
+                <p>View your generated questions and answer key in the browser. Download both PDFs for offline use or printing.</p>
+            </div>
+
+            <!-- Tips -->
+            <div class="help-section">
+                <h2>💡 Tips for Best Results</h2>
+                <div class="tip-box">
+                    <h4>🎯 Pro Tips</h4>
+                    <ul>
+                        <li>Use clear and well-structured PDFs for better accuracy</li>
+                        <li>Longer documents may take more time to process (be patient!)</li>
+                        <li>Always review the generated questions before sharing with students</li>
+                        <li>Documents with clear headings and organized content work best</li>
+                        <li>Ensure your PDF has searchable text, not scanned images only</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="help-section">
+                <h2>🔧 Troubleshooting</h2>
+                
+                <div class="troubleshoot-item">
+                    <p><strong>"File not uploading"</strong> → Make sure your file is in PDF format and not corrupted.</p>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <p><strong>"No questions generated"</strong> → Check that the uploaded PDF has readable text (not only images or scanned documents).</p>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <p><strong>"Processing takes too long"</strong> → Large documents need more time. Wait patiently or try with a smaller document first.</p>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <p><strong>"PDF not displaying"</strong> → Your browser might not support PDF viewing. Use the download buttons to get the files.</p>
+                </div>
+            </div>
+
+            <!-- Support -->
+            <div class="help-section">
+                <h2>🆘 Support & Development</h2>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    <a href="https://github.com/PranavJa1n/EduGenius" class="github-link" target="_blank">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        View on GitHub
+                    </a>
+                </div>
+
+                <div class="contact-info">
+                    <h3>Need More Help?</h3>
+                    <p>For additional support, feature requests, or bug reports, please visit our GitHub repository or create an issue.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme from localStorage
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const docElement = document.documentElement;
+            docElement.className = savedTheme + '-theme';
+
+            // Theme toggle
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            
+            themeToggleBtn.addEventListener('click', () => {
+                if (docElement.classList.contains('dark-theme')) {
+                    docElement.className = 'light-theme';
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    docElement.className = 'dark-theme';
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+
+            // Background particle effect
+            const canvas = document.getElementById('background-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particlesArray;
+
+            class Particle {
+                constructor(x, y, dX, dY, size) {
+                    this.x = x;
+                    this.y = y;
+                    this.directionX = dX;
+                    this.directionY = dY;
+                    this.size = size;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = 'rgba(99, 102, 241, 0.3)';
+                    ctx.fill();
+                }
+
+                update() {
+                    if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                    if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                    this.x += this.directionX;
+                    this.y += this.directionY;
+                    this.draw();
+                }
+            }
+
+            function initCanvas() {
+                particlesArray = [];
+                let num = (canvas.height * canvas.width) / 9000;
+                for (let i = 0; i < num; i++) {
+                    let size = (Math.random() * 2) + 1;
+                    let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                    let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                    let dX = (Math.random() * 0.4) - 0.2;
+                    let dY = (Math.random() * 0.4) - 0.2;
+                    particlesArray.push(new Particle(x, y, dX, dY, size));
+                }
+            }
+
+            function animateCanvas() {
+                requestAnimationFrame(animateCanvas);
+                ctx.clearRect(0, 0, innerWidth, innerHeight);
+                particlesArray.forEach(p => p.update());
+            }
+
+            initCanvas();
+            animateCanvas();
+
+            window.addEventListener('resize', () => {
+                canvas.width = innerWidth;
+                canvas.height = innerHeight;
+                initCanvas();
+            });
+        });
+    </script>
+</body>
+
+</html>

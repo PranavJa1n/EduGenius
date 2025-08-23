@@ -422,5 +422,9 @@ def download_pdf(pdf_type):
     else:
         return redirect(url_for('home'))
 
+@app.route('/help')
+def help_page():
+    return render_template("help.html")
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=80)
