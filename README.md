@@ -203,14 +203,6 @@ Please create an issue with:
 
 ---
 
-## 📈 Project Stats
-
-<div align="center">
-  <img src="https://img.shields.io/github/stars/your-username/edugenius?style=social" alt="GitHub stars">
-  <img src="https://img.shields.io/github/forks/your-username/edugenius?style=social" alt="GitHub forks">
-  <img src="https://img.shields.io/github/issues/your-username/edugenius" alt="GitHub issues">
-</div>
-
 ---
 
 <div align="center">
