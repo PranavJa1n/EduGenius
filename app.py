@@ -72,6 +72,7 @@ def process_pdf_and_generate_questions(filepath, mcq_limit, tf_limit):
     client = OpenAI(api_key=os.getenv("api"), base_url="https://api.perplexity.ai")
     response = client.chat.completions.create(
         model="sonar-pro",
+        temperature=2.0,
         messages=[
             {
                 "role": "user",
