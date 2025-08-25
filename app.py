@@ -35,6 +35,7 @@ def upload_file():
         # Get user-defined limits
         mcq_limit = int(request.form.get('mcq_limit', 10))
         tf_limit = int(request.form.get('tf_limit', 10))
+        hardness = request.form.get('hardness', 'intermediate')
         
         # Save uploaded file
         filename = file.filename
@@ -43,7 +44,7 @@ def upload_file():
         
         try:
             # Process the PDF and generate questions
-            process_pdf_and_generate_questions(filepath, mcq_limit, tf_limit)
+            process_pdf_and_generate_questions(filepath, mcq_limit, tf_limit, hardness)
             
             # Convert PDFs to base64 for embedding
             question_pdf_base64 = pdf_to_base64('generated/question.pdf')
@@ -61,12 +62,12 @@ def upload_file():
     else:
         return render_template('index.html', error="Please upload a valid PDF file")
 
-def process_pdf_and_generate_questions(filepath, mcq_limit, tf_limit):
+def process_pdf_and_generate_questions(filepath, mcq_limit, tf_limit, hardness):
     # Extract text from PDF
     with pymupdf.open(filepath) as doc:
         content = chr(12).join([page.get_text() for page in doc])
     
-    content += f"\nNumber of MCQ = {mcq_limit}\nNumber of True/False = {tf_limit}"
+    content += f"\nNumber of MCQ = {mcq_limit}\nNumber of True/False = {tf_limit}\nhardness = {hardness}"
     
     # Generate questions using OpenAI
     client = OpenAI(api_key=os.getenv("api"), base_url="https://api.perplexity.ai")
