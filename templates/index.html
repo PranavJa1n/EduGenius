@@ -210,6 +210,61 @@
             color: var(--primary-glow);
         }
 
+        /* File Upload Preview Styles */
+        .file-preview {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 2rem;
+            border: 2px solid var(--success-color);
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.05);
+            margin: 2rem 0;
+        }
+
+        .file-preview.show {
+            display: flex;
+        }
+
+        .pdf-icon {
+            width: 64px;
+            height: 64px;
+            color: var(--success-color);
+        }
+
+        .file-info {
+            text-align: center;
+        }
+
+        .file-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-size {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .remove-file-btn {
+            background: none;
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-file-btn:hover {
+            background: var(--error-color);
+            color: white;
+        }
+
         /* Generation Options */
         .generation-options {
             display: flex;
@@ -478,7 +533,18 @@
                                 </div>
                                 <p>Drag & drop your document here, or <button type="button" id="browse-files-btn"
                                         class="browse-btn">browse files</button></p>
-                                <div id="file-name" style="margin-top: 1rem; color: var(--success-color); display: none;"></div>
+                            </div>
+
+                            <!-- File Preview Section -->
+                            <div class="file-preview" id="file-preview">
+                                <svg class="pdf-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm5-9h-4l6-6l6 6h-4v4h-4v-4z"/>
+                                </svg>
+                                <div class="file-info">
+                                    <div class="file-name" id="preview-file-name"></div>
+                                    <div class="file-size" id="preview-file-size"></div>
+                                </div>
+                                <button type="button" class="remove-file-btn" id="remove-file-btn">Remove File</button>
                             </div>
 
                             <!-- Generation Options -->
@@ -537,16 +603,43 @@
             const fileInput = document.getElementById('file-input');
             const browseBtn = document.getElementById('browse-files-btn');
             const dropZone = document.getElementById('upload-drop-zone');
-            const fileName = document.getElementById('file-name');
+            const filePreview = document.getElementById('file-preview');
+            const previewFileName = document.getElementById('preview-file-name');
+            const previewFileSize = document.getElementById('preview-file-size');
+            const removeFileBtn = document.getElementById('remove-file-btn');
             const form = document.getElementById('upload-form');
 
             browseBtn.addEventListener('click', () => fileInput.click());
 
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function showFilePreview(file) {
+                previewFileName.textContent = file.name;
+                previewFileSize.textContent = formatFileSize(file.size);
+                filePreview.classList.add('show');
+                dropZone.style.display = 'none';
+            }
+
+            function hideFilePreview() {
+                filePreview.classList.remove('show');
+                dropZone.style.display = 'block';
+                fileInput.value = '';
+            }
+
             fileInput.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
-                    fileName.textContent = `Selected: ${e.target.files[0].name}`;
-                    fileName.style.display = 'block';
+                    showFilePreview(e.target.files[0]);
                 }
+            });
+
+            removeFileBtn.addEventListener('click', () => {
+                hideFilePreview();
             });
 
             // Drag and drop
@@ -567,8 +660,7 @@
                 const files = e.dataTransfer.files;
                 if (files.length > 0 && files[0].type === 'application/pdf') {
                     fileInput.files = files;
-                    fileName.textContent = `Selected: ${files[0].name}`;
-                    fileName.style.display = 'block';
+                    showFilePreview(files[0]);
                 }
                 dropZone.style.borderColor = 'var(--border-color)';
                 dropZone.style.background = 'rgba(255, 255, 255, 0.02)';
@@ -580,14 +672,14 @@
             
             const difficultyLevels = {
                 1: 'Easy',
-                2: 'Low-Intermediate', 
+                2: 'Pre-Intermediate', 
                 3: 'Intermediate',
                 4: 'Hard'
             };
             
             const difficultyValues = {
                 1: 'easy',
-                2: 'low-intermediate',
+                2: 'Pre-intermediate',
                 3: 'intermediate', 
                 4: 'hard'
             };
@@ -608,10 +700,7 @@
                 submitBtn.classList.add('loading');
                 submitBtn.querySelector('.btn-text').textContent = 'Processing...';
                 document.body.classList.add('loading');
-                
-                // Set the actual value to be sent to the server
-                const hardnessValue = hardnessSlider.getAttribute('data-value');
-                hardnessSlider.value = hardnessValue;
+                // Do not modify slider value here; submit numeric (1-4)
             });
 
             // 3D Panel tilt effect

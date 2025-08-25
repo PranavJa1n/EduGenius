@@ -36,7 +36,17 @@ def upload_file():
         mcq_limit = int(request.form.get('mcq_limit', 10))
         tf_limit = int(request.form.get('tf_limit', 10))
         hardness = request.form.get('hardness', 'intermediate')
-        
+        hardness_value = str(hardness).strip().lower()
+        if hardness_value in ("1", "easy"):
+            hardness_label = "Easy"
+        elif hardness_value in ("2", "low-intermediate", "pre-intermediate"):
+            hardness_label = "Pre-Intermediate"
+        elif hardness_value in ("3", "intermediate"):
+            hardness_label = "Intermediate"
+        else:
+            hardness_label = "Hard"
+
+
         # Save uploaded file
         filename = file.filename
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -44,17 +54,27 @@ def upload_file():
         
         try:
             # Process the PDF and generate questions
-            process_pdf_and_generate_questions(filepath, mcq_limit, tf_limit, hardness)
+            process_pdf_and_generate_questions(filepath, mcq_limit, tf_limit, hardness_label)
             
             # Convert PDFs to base64 for embedding
             question_pdf_base64 = pdf_to_base64('generated/question.pdf')
             answer_pdf_base64 = pdf_to_base64('generated/answer.pdf')
-            
+            # Normalize hardness coming from the form (range slider submits strings)
+            hardness_value = str(hardness).strip().lower()
+            if hardness_value in ("1", "easy"):
+                hardness_label = "Easy"
+            elif hardness_value in ("2", "low-intermediate", "pre-intermediate"):
+                hardness_label = "Pre-Intermediate"
+            elif hardness_value in ("3", "intermediate"):
+                hardness_label = "Intermediate"
+            else:
+                hardness_label = "Hard"
             return render_template('result.html', 
                                  question_pdf=question_pdf_base64,
                                  answer_pdf=answer_pdf_base64,
                                  mcq_count=mcq_limit,
-                                 tf_count=tf_limit)
+                                 tf_count=tf_limit,
+                                 hardness=hardness_label)
         
         except Exception as e:
             return render_template('index.html', error=f"Error processing PDF: {str(e)}")
